@@ -479,7 +479,8 @@ export function resolveRoute(
     if (!hasActive && total > 0) {
       state = 'active';
       hasActive = true;
-      // fill-first and reset-soonest send every request to one credential, so no shares.
+      // fill-first and reset-soonest have no fixed split (reset-soonest only falls back to
+      // round-robin when no credential in the tier has a known weekly reset).
       if (strategy !== 'fill-first' && strategy !== 'reset-soonest') {
         for (const member of members) {
           const value = units.get(member.key);

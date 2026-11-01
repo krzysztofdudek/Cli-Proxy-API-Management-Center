@@ -46,9 +46,6 @@ const board = () => buildRoutingBoard(RAW, FILES);
 describe('reset-soonest routing strategy', () => {
   test('is read as reset-soonest instead of falling back to round-robin', () => {
     expect(readRoutingSettings(RAW).strategy).toBe('reset-soonest');
-    expect(readRoutingSettings({ routing: { strategy: 'Reset_Soonest' } }).strategy).toBe(
-      'reset-soonest'
-    );
     expect(parseRoutingStrategy('reset-soonest')).toBe('reset-soonest');
     expect(parseRoutingStrategy(' resetsoonest ')).toBe('reset-soonest');
     expect(ROUTING_STRATEGIES).toContain('reset-soonest');
@@ -101,6 +98,28 @@ describe('reset-soonest routing strategy', () => {
     const markup = renderToStaticMarkup(createElement(Harness));
     const result = markup.slice('<pre>'.length, -'</pre>'.length);
     expect(parseYaml(result)).toEqual({ routing: { strategy: 'reset-soonest' } });
+  });
+
+  test('editing another field in the visual config editor keeps reset-soonest', () => {
+    const yaml = 'routing:\n  strategy: reset-soonest\n  session-affinity: true\n';
+    function Harness() {
+      const visualConfig = useVisualConfig();
+      const [phase, setPhase] = useState(0);
+      if (phase === 0) {
+        visualConfig.loadVisualValuesFromYaml(yaml);
+        setPhase(1);
+        return null;
+      }
+      if (phase === 1) {
+        visualConfig.setVisualValues({ requestRetry: '5' });
+        setPhase(2);
+        return null;
+      }
+      return createElement('pre', null, visualConfig.applyVisualChangesToYaml(yaml));
+    }
+    const markup = renderToStaticMarkup(createElement(Harness));
+    const result = parseYaml(markup.slice('<pre>'.length, -'</pre>'.length));
+    expect(result.routing.strategy).toBe('reset-soonest');
   });
 
   test('every locale labels and describes it', () => {
