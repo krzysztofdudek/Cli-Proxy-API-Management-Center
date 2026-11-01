@@ -1,0 +1,27 @@
+{
+  "name": "CLI Proxy API Management Center Dev",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:24-bookworm",
+  "runArgs": [
+    "--name=cli-proxy-api-management-center-devcontainer",
+    "--hostname=cli-proxy-api-management-center-devcontainer"
+  ],
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "moby": true
+    }
+  },
+  "forwardPorts": [5173],
+  "postCreateCommand": "curl -fsSL https://bun.sh/install | bash -s bun-v1.4.3 && ~/.bun/bin/bun install --frozen-lockfile",
+  "remoteEnv": {
+    "PATH": "/home/node/.bun/bin:${containerEnv:PATH}"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  },
+  "remoteUser": "node"
+}
