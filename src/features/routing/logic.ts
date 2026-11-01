@@ -479,7 +479,8 @@ export function resolveRoute(
     if (!hasActive && total > 0) {
       state = 'active';
       hasActive = true;
-      if (strategy !== 'fill-first') {
+      // fill-first and reset-soonest send every request to one credential, so no shares.
+      if (strategy !== 'fill-first' && strategy !== 'reset-soonest') {
         for (const member of members) {
           const value = units.get(member.key);
           if (value !== undefined) member.share = Math.round((value / total) * 1000) / 10;
